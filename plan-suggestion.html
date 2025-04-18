@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LMS Hosting Selector</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f9f9f9;
+      padding: 2rem;
+      max-width: 700px;
+      margin: auto;
+    }
+    h1 {
+      text-align: center;
+      color: #2a2a2a;
+    }
+    label {
+      display: block;
+      margin: 1rem 0 0.5rem;
+      font-weight: bold;
+    }
+    select, button {
+      width: 100%;
+      padding: 0.75rem;
+      margin-bottom: 1rem;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      font-size: 1rem;
+    }
+    .result {
+      background: #fff;
+      padding: 1rem;
+      border-radius: 10px;
+      border: 1px solid #ddd;
+      margin-top: 2rem;
+    }
+    .btn-link {
+      display: inline-block;
+      margin-top: 1rem;
+      background: #0066cc;
+      color: #fff;
+      padding: 0.75rem 1.25rem;
+      text-decoration: none;
+      border-radius: 6px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Find the Right LMS Hosting for Your Needs</h1>
+
+  <label for="students">Number of Students:</label>
+  <select id="students">
+    <option value="small">Up to 100</option>
+    <option value="medium">100–500</option>
+    <option value="large">500+</option>
+  </select>
+
+  <label for="budget">Monthly Budget:</label>
+  <select id="budget">
+    <option value="low">Under $10</option>
+    <option value="medium">$10–$50</option>
+    <option value="high">Over $50</option>
+  </select>
+
+  <label for="ram">Preferred RAM:</label>
+  <select id="ram">
+    <option value="1">1 GB</option>
+    <option value="2">2 GB</option>
+    <option value="4">4 GB</option>
+    <option value="8">8+ GB</option>
+  </select>
+
+  <label for="features">Required Features:</label>
+  <select id="features">
+    <option value="basic">Basic hosting (1 site, no advanced config)</option>
+    <option value="wordpress">WordPress LMS (LearnDash, LifterLMS)</option>
+    <option value="scalable">Scalable with root access (VPS)</option>
+    <option value="enterprise">Enterprise-grade with full control</option>
+  </select>
+
+  <button onclick="showRecommendation()">Get My Recommendation</button>
+
+  <div class="result" id="result"></div>
+
+  <script>
+    function showRecommendation() {
+      const students = document.getElementById('students').value;
+      const budget = document.getElementById('budget').value;
+      const ram = parseInt(document.getElementById('ram').value);
+      const features = document.getElementById('features').value;
+
+      let output = "";
+
+      if (features === "basic" && budget === "low" && ram <= 2) {
+        output = `We recommend <strong>Shared Hosting</strong> (GoSolo++, Premium++, or Enterprise Pro++) — ideal for small to moderate LMS use.` +
+                 `<br><a class='btn-link' href='https://www.accuwebhosting.com/web-hosting/linux' target='_blank'>Explore Shared Hosting</a>`;
+      } else if (features === "wordpress" && budget !== "high" && ram >= 2) {
+        output = `Try our <strong>WordPress Hosting</strong> (Startup++, Professional++, or Advanced++) for an optimized LMS WordPress experience.` +
+                 `<br><a class='btn-link' href='https://www.accuwebhosting.com/web-hosting/wordpress' target='_blank'>Explore WordPress Hosting</a>`;
+      } else if ((features === "scalable" || students === "medium") && ram >= 2) {
+        output = `Go with <strong>VPS Hosting</strong> (VPS Premium++ or higher). Scalable and performance-ready for mid-sized LMS platforms.` +
+                 `<br><a class='btn-link' href='https://www.accuwebhosting.com/vps-hosting/linux-vps' target='_blank'>Explore VPS Hosting</a>`;
+      } else if (features === "enterprise" || students === "large" || ram >= 8) {
+        output = `You need <strong>Dedicated Servers</strong>. Choose from our Classic, Storage, or High-Availability series for full performance.` +
+                 `<br><a class='btn-link' href='https://www.accuwebhosting.com/dedicated-servers' target='_blank'>Explore Dedicated Servers</a>`;
+      } else {
+        output = `We recommend starting with <strong>Shared Hosting</strong> and upgrading as you grow.` +
+                 `<br><a class='btn-link' href='https://www.accuwebhosting.com/web-hosting/linux' target='_blank'>Explore Shared Hosting</a>`;
+      }
+
+      document.getElementById('result').innerHTML = output;
+    }
+  </script>
+</body>
+</html>
