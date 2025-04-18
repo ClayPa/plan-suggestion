@@ -38,7 +38,7 @@
             border: 1px solid #ccc;
             border-radius: 4px;
         }
-        .button {
+        .button { /* Style for the main submit button */
             background-color: #02043e;
             color: white;
             border: none;
@@ -48,9 +48,12 @@
             border-radius: 4px;
             width: 100%;
             margin-top: 10px;
+            text-align: center; /* Ensure text is centered */
+            text-decoration: none; /* Remove underline if used as link */
+            display: block; /* Make it block level */
         }
         .button:hover {
-            background-color: #02043e;
+            background-color: #01022a; /* Slightly darker blue on hover */
         }
         .results {
             display: none;
@@ -67,18 +70,45 @@
             margin-top: 0;
             color: #333;
         }
-        .result-box ul {
+        .result-box ul { /* Kept in case you revert later */
             list-style: none;
             padding: 0;
         }
-        .result-box ul li {
-            margin: 8px 0;
+        .result-box ul li { /* Kept in case you revert later */
+            margin: 12px 0; /* Adjusted margin */
             color: #555;
+            line-height: 1.5; /* Improve readability */
         }
         .highlight {
             font-weight: bold;
-            color: #1E90FF;
+            color: #1E90FF; /* Bright blue */
         }
+        /* --- NEW CSS FOR THE LMS BUTTON --- */
+        .lms-btn {
+            display: inline-block; /* Allows padding and keeps it inline */
+            margin-top: 15px; /* Space above the button */
+            background-color: #02043e; /* Match main button color */
+            color: white !important; /* Ensure white text, override potential link colors */
+            padding: 10px 18px;
+            border-radius: 4px;
+            text-decoration: none; /* Remove underline from link */
+            font-size: 1em; /* Match base font size or adjust as needed */
+            text-align: center;
+            cursor: pointer;
+            border: none;
+            transition: background-color 0.2s ease; /* Smooth hover effect */
+        }
+        .lms-btn:hover {
+             background-color: #01022a; /* Darken slightly on hover */
+             color: white !important; /* Keep text white on hover */
+        }
+        /* --- END NEW CSS --- */
+
+         /* Style for the final note */
+         .disclaimer-note {
+            margin-top: 20px; /* Add space above the note */
+         }
+
     </style>
 </head>
 <body>
@@ -98,7 +128,7 @@
                 <option value="1000+">1000+</option>
             </select>
         </div>
-        
+
         <div class="form-group">
             <label for="budget">Budget (per month in $):</label>
             <select id="budget" required>
@@ -141,7 +171,7 @@
         <div class="result-box">
             <h2>Recommended Hosting Solution:</h2>
             <div id="hostingRecommendation"></div>
-            <div id="planDetails"></div>
+            <div id="planDetails"></div> {/* Rationale and button will go here */}
         </div>
     </div>
 </div>
@@ -162,32 +192,19 @@ document.getElementById("lmsForm").addEventListener("submit", function(event) {
         return; // Stop execution if any field is empty
     }
 
-    // --- 2. Define Hosting Tiers and Plans (Note property is still here but won't be used) ---
-     const plans = {
-         shared: {
-             low: { name: "Shared Hosting - GoSolo++ / Premium++", link: "https://www.accuwebhosting.com/web-hosting/linux", note: "Unused" },
-             high: { name: "Shared Hosting - Enterprise Pro++", link: "https://www.accuwebhosting.com/web-hosting/linux", note: "Unused" }
-         },
-         wordpress: {
-             low: { name: "WordPress Hosting - Startup++", link: "https://www.accuwebhosting.com/web-hosting/wordpress", note: "Unused"},
-             mid: { name: "WordPress Hosting - Professional++", link: "https://www.accuwebhosting.com/web-hosting/wordpress", note: "Unused"},
-             high: { name: "WordPress Hosting - Advanced++", link: "https://www.accuwebhosting.com/web-hosting/wordpress", note: "Unused"}
-         },
-         vps: {
-             low: { name: "VPS Hosting - VPS Lite++", link: "https://www.accuwebhosting.com/vps-hosting/linux", note: "Unused" },
-             mid: { name: "VPS Hosting - VPS Premium++ / Elite++", link: "https://www.accuwebhosting.com/vps-hosting/linux", note: "Unused" },
-             high: { name: "VPS Hosting - VPS Exclusive++", link: "https://www.accuwebhosting.com/vps-hosting/linux", note: "Unused" }
-         },
-         dedicated: {
-             standard: { name: "Dedicated Hosting - Classic Series", link: "https://www.accuwebhosting.com/dedicated-servers", note: "Unused" },
-             ha: { name: "High Availability Servers", link: "https://www.accuwebhosting.com/dedicated-servers", note: "Unused" }
-         }
+    // --- 2. Define Hosting Tiers and Links (Simplified - only need main category links now) ---
+     const categoryLinks = {
+         shared: "https://www.accuwebhosting.com/web-hosting/linux", // Default shared link
+         wordpress: "https://www.accuwebhosting.com/web-hosting/wordpress",
+         vps: "https://www.accuwebhosting.com/vps-hosting/linux",
+         dedicated: "https://www.accuwebhosting.com/dedicated-servers",
+         default: "https://www.accuwebhosting.com/" // Fallback
      };
 
     // --- 3. Recommendation Logic ---
     let recommendedType = "Shared Hosting"; // Default assumption
-    let recommendedPlans = [];
     let rationale = "";
+    let generalLink = categoryLinks.default; // Start with default link
 
     // --- Convert selections into comparable levels ---
     // Students: 1 (<=50), 2 (51-200), 3 (201-500), 4 (501-1000), 5 (1000+)
@@ -221,81 +238,56 @@ document.getElementById("lmsForm").addEventListener("submit", function(event) {
 
     // --- Decision Tree ---
 
-    // **Dedicated Server Conditions:** (Highest requirements first)
+    // **Dedicated Server Conditions:**
      if (studentLevel >= 5 || (studentLevel >= 4 && (bandwidthLevel >= 3 || storageLevel >= 4)) || budgetLevel >= 5 || (bandwidthLevel >= 3 && storageLevel >= 5)) {
          recommendedType = "Dedicated Hosting";
-         recommendedPlans.push(plans.dedicated.standard);
          rationale = "Your requirements (high student count, significant bandwidth/storage, or high budget) suggest a dedicated environment offers the best performance, control, and reliability.";
-          if (budgetLevel === 5 && studentLevel >=4) { // If budget allows high availability
-              recommendedPlans.push(plans.dedicated.ha);
-          }
-          if (budgetLevel < 5 && studentLevel >= 5) {
-              rationale += " Consider discussing specific needs with the provider as dedicated costs vary significantly."
-          }
+         generalLink = categoryLinks.dedicated;
+         if (budgetLevel < 5 && studentLevel >= 5) {
+             rationale += " Consider discussing specific needs with the provider as dedicated costs vary significantly."
+         }
 
-     // **VPS Conditions:** (Moderate to high requirements, excluding dedicated cases)
+     // **VPS Conditions:**
      } else if (studentLevel >= 2 || budgetLevel >= 3 || bandwidthLevel >= 2 || storageLevel >= 2) {
           recommendedType = "VPS Hosting";
           rationale = "VPS offers a good balance of performance, scalability, and cost for moderate to growing LMS needs, providing more resources than shared hosting.";
-
-          // Suggest specific VPS tiers based on combined factors
+          generalLink = categoryLinks.vps;
           let vpsScore = studentLevel + budgetLevel + bandwidthLevel + storageLevel;
-          if (vpsScore <= 9) { // Adjusted threshold slightly for broader low VPS coverage
-              recommendedPlans.push(plans.vps.low);
-              if (budgetLevel >= 3 || vpsScore >= 7) recommendedPlans.push(plans.vps.mid); // Suggest mid if budget allows OR needs are borderline mid
-          } else if (vpsScore <= 13) { // Adjusted threshold slightly
-              recommendedPlans.push(plans.vps.mid);
-               if (budgetLevel >= 4 || vpsScore >= 11) recommendedPlans.push(plans.vps.high); // Suggest high if budget allows OR needs are borderline high
-          } else { // Higher end VPS
-              recommendedPlans.push(plans.vps.high);
-              if (budgetLevel < 4) rationale += " Note: High-end VPS might exceed the lower end of your selected budget range."
+          if (budgetLevel < 3 && vpsScore > 10) { // If needs are high but budget is low for VPS
+             rationale += " Note: Your resource needs point towards VPS, but your selected budget is on the lower side for these plans. Careful selection is needed."
+          }
+          // Simple check if WordPress might be a consideration within VPS range
+          if (budgetLevel >= 2 && studentLevel <= 3 && vpsScore <= 11) {
+              // Could optionally set generalLink to categoryLinks.wordpress here if WP is strongly preferred
+              // generalLink = categoryLinks.wordpress;
+              // rationale += " WordPress-optimized hosting could also be a good fit.";
           }
 
-          // Also suggest WordPress hosting if budget/needs align (adjusting conditions slightly)
-          if (budgetLevel >= 2 && studentLevel <= 3 && vpsScore <= 11) recommendedPlans.push(plans.wordpress.mid);
-          if (budgetLevel >= 3 && studentLevel >= 2 && vpsScore >= 9) recommendedPlans.push(plans.wordpress.high);
 
-
-     // **Shared Hosting Conditions:** (Lowest requirements)
+     // **Shared Hosting Conditions:**
      } else {
          recommendedType = "Shared Hosting";
          rationale = "Shared hosting is the most economical option, suitable for starting out, smaller student numbers, and lower resource demands.";
-         recommendedPlans.push(plans.shared.low);
-         if (budgetLevel >= 2 || storageLevel >= 2 || bandwidthLevel >=2) { // If slightly higher needs within shared tier
-              recommendedPlans.push(plans.shared.high);
-         }
-         // Suggest WP hosting if budget allows slightly more than basic shared
-         if (budgetLevel >= 1) {
-              recommendedPlans.push(plans.wordpress.low);
+         generalLink = categoryLinks.shared; // Default to standard shared
+         // If budget is very low but needs slightly higher, suggest WP might be alternative
+         if (budgetLevel >= 1 && (storageLevel >= 2 || bandwidthLevel >= 2)) {
+             generalLink = categoryLinks.wordpress; // Point towards WP hosting page as potentially better featured shared
+             rationale += " Consider WordPress Hosting plans as well, as they might offer better value for LMS features at this level.";
+         } else if (budgetLevel >=1) {
+            // Or generally suggest WP hosting as an option for shared
+             // generalLink = categoryLinks.wordpress;
          }
      }
-
-      // Filter out duplicate plan suggestions (by name)
-      recommendedPlans = recommendedPlans.filter((plan, index, self) =>
-          index === self.findIndex((p) => (
-              p.name === plan.name
-          ))
-      );
 
     // --- 4. Display Results ---
     document.getElementById("hostingRecommendation").innerHTML = `<span class='highlight'>${recommendedType}</span>`;
 
-    let planDetailsHTML = `<p>${rationale}</p> <h4>Potential Plan Types:</h4><ul>`;
-    if (recommendedPlans.length > 0) {
-        recommendedPlans.forEach(plan => {
-            // MODIFIED LINE: Removed plan.note, changed link text and style
-            planDetailsHTML += `
-                <li>
-                    <strong>${plan.name}</strong>
-                    <a href="${plan.link}" target="_blank" style="margin-left: 15px; display: inline-block; background-color: #4CAF50; color: white; padding: 5px 12px; border-radius: 4px; text-decoration: none; font-size: 0.9em; vertical-align: middle;">View Plan</a>
-                </li>`;
-        });
-    } else {
-        planDetailsHTML += "<li>No specific plans matched perfectly, but the general type above is recommended. Please check the provider's site.</li>";
-    }
-    planDetailsHTML += "</ul>";
-    planDetailsHTML += `<p><small><em>Note: These are general recommendations. Always verify plan specifics (storage, bandwidth, RAM, CPU limits, allowed concurrent users if specified) directly with the hosting provider to ensure they meet your exact LMS requirements. Prices and plan details can change.</em></small></p>`;
-
+    // Generate the new HTML using the user's desired structure, targeting planDetails div
+    let planDetailsHTML = `
+        <p>${rationale}</p>
+        <a href="${generalLink}" target="_blank" class="lms-btn">Explore Plans</a>
+        <p class="disclaimer-note"><small><em>Note: These are general recommendations. Reach out to us and share your requirements to get the best plan.</em></small></p>
+        `; // Added the disclaimer note back with a class for potential spacing
 
     document.getElementById("planDetails").innerHTML = planDetailsHTML;
     document.getElementById("results").style.display = "block"; // Show the results section
@@ -305,7 +297,6 @@ document.getElementById("lmsForm").addEventListener("submit", function(event) {
 
 });
 </script>
-
 
 </body>
 </html>
