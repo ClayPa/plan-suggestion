@@ -148,73 +148,164 @@
 
 <script>
 document.getElementById("lmsForm").addEventListener("submit", function(event) {
-  event.preventDefault();
+    event.preventDefault(); // Prevent the default form submission
 
-  const platform = document.getElementById("platform").value;
-  const students = document.getElementById("students").value;
-  const budget = document.getElementById("budget").value;
-  const bandwidth = document.getElementById("bandwidth").value;
-  const storage = document.getElementById("storage").value;
+    // Get selected values
+    const studentsVal = document.getElementById("students").value;
+    const budgetVal = document.getElementById("budget").value;
+    const bandwidthVal = document.getElementById("bandwidth").value;
+    const storageVal = document.getElementById("storage").value;
 
-  if (!platform || !students || !budget || !bandwidth || !storage) {
-    alert("Please select all options before getting your recommendation.");
-    return;
-  }
-
-  // Parse
-  const studentRanges = {
-    less25: 25,
-    "25-75": 75,
-    "75-200": 200,
-    "200-500": 500,
-    "500plus": 1000
-  };
-  const budgetMax = budget.includes("plus") ? Infinity : parseInt(budget.split("-")[1]);
-  const studentCount = studentRanges[students];
-  const isWordPressLMS = platform === "learndash" || platform === "lifterlms";
-
-  let hosting = "";
-  let details = "";
-
-  // Priority: Students → Budget → Platform
-
-  if (studentCount <= 25) {
-    hosting = isWordPressLMS ? "WordPress Hosting" : "Shared Hosting";
-    details = isWordPressLMS
-      ? "Plan: WordPress Startup – 10 GB SSD, Free SSL, Auto Updates. <strong>(30-day money-back guarantee)</strong>"
-      : "Plan: Shared GoSolo – 50 GB storage, 750 GB bandwidth. <strong>(30-day money-back guarantee)</strong>";
-  } else if (studentCount <= 200) {
-    if (budgetMax <= 50) {
-      hosting = isWordPressLMS ? "WordPress Hosting" : "Shared Hosting";
-      details = isWordPressLMS
-        ? "Plan: WordPress Professional – 50-75 GB SSD, optimized for LearnDash/LifterLMS. <strong>(30-day money-back guarantee)</strong>"
-        : "Plan: Shared Premium – 75 GB SSD, 1 TB bandwidth. <strong>(30-day money-back guarantee)</strong>";
-    } else {
-      hosting = "VPS Hosting";
-      details = "Plan: VPS Lite or VPS Premium – 40-70 GB SSD, scalable RAM, root access. <strong>(7-day money-back guarantee)</strong>";
+    // --- 1. Validation ---
+    if (!studentsVal || !budgetVal || !bandwidthVal || !storageVal) {
+        alert("Please select an option for all fields.");
+        return; // Stop execution if any field is empty
     }
-  } else if (studentCount <= 500) {
-    if (budgetMax <= 100) {
-      hosting = "VPS Hosting";
-      details = "Plan: VPS Premium – 70+ GB SSD, 1 TB bandwidth. Good for growing LMS platforms. <strong>(7-day money-back guarantee)</strong>";
+
+    // --- 2. Define Hosting Tiers and Plans (Note property is still here but won't be used) ---
+     const plans = {
+         shared: {
+             low: { name: "Shared Hosting - GoSolo++ / Premium++", link: "https://www.accuwebhosting.com/web-hosting/linux", note: "Unused" },
+             high: { name: "Shared Hosting - Enterprise Pro++", link: "https://www.accuwebhosting.com/web-hosting/linux", note: "Unused" }
+         },
+         wordpress: {
+             low: { name: "WordPress Hosting - Startup++", link: "https://www.accuwebhosting.com/web-hosting/wordpress", note: "Unused"},
+             mid: { name: "WordPress Hosting - Professional++", link: "https://www.accuwebhosting.com/web-hosting/wordpress", note: "Unused"},
+             high: { name: "WordPress Hosting - Advanced++", link: "https://www.accuwebhosting.com/web-hosting/wordpress", note: "Unused"}
+         },
+         vps: {
+             low: { name: "VPS Hosting - VPS Lite++", link: "https://www.accuwebhosting.com/vps-hosting/linux", note: "Unused" },
+             mid: { name: "VPS Hosting - VPS Premium++ / Elite++", link: "https://www.accuwebhosting.com/vps-hosting/linux", note: "Unused" },
+             high: { name: "VPS Hosting - VPS Exclusive++", link: "https://www.accuwebhosting.com/vps-hosting/linux", note: "Unused" }
+         },
+         dedicated: {
+             standard: { name: "Dedicated Hosting - Classic Series", link: "https://www.accuwebhosting.com/dedicated-servers", note: "Unused" },
+             ha: { name: "High Availability Servers", link: "https://www.accuwebhosting.com/dedicated-servers", note: "Unused" }
+         }
+     };
+
+    // --- 3. Recommendation Logic ---
+    let recommendedType = "Shared Hosting"; // Default assumption
+    let recommendedPlans = [];
+    let rationale = "";
+
+    // --- Convert selections into comparable levels ---
+    // Students: 1 (<=50), 2 (51-200), 3 (201-500), 4 (501-1000), 5 (1000+)
+    let studentLevel = 1;
+    if (["26-50"].includes(studentsVal)) studentLevel = 1; // Keep 1-50 as level 1
+    else if (["51-200"].includes(studentsVal)) studentLevel = 2;
+    else if (["201-500"].includes(studentsVal)) studentLevel = 3;
+    else if (["501-1000"].includes(studentsVal)) studentLevel = 4;
+    else if (["1000+"].includes(studentsVal)) studentLevel = 5;
+
+    // Budget: 1 (<=25), 2 (26-50), 3 (51-100), 4 (101-200), 5 (201+)
+    let budgetLevel = 1;
+    if (["26-50"].includes(budgetVal)) budgetLevel = 2;
+    else if (["51-100"].includes(budgetVal)) budgetLevel = 3;
+    else if (["101-200"].includes(budgetVal)) budgetLevel = 4;
+    else if (["201+"].includes(budgetVal)) budgetLevel = 5;
+
+    // Bandwidth: 1 (low), 2 (medium), 3 (high)
+    let bandwidthLevel = 1;
+    if (bandwidthVal === "medium") bandwidthLevel = 2;
+    else if (bandwidthVal === "high") bandwidthLevel = 3;
+
+    // Storage: 1 (<=25), 2 (50), 3 (75), 4 (100), 5 (150+)
+    let storageLevel = 1;
+    if (["10", "25"].includes(storageVal)) storageLevel = 1; // Group 10 and 25
+    else if (storageVal === "50") storageLevel = 2;
+    else if (storageVal === "75") storageLevel = 3;
+    else if (storageVal === "100") storageLevel = 4;
+    else if (storageVal === "150+") storageLevel = 5;
+
+
+    // --- Decision Tree ---
+
+    // **Dedicated Server Conditions:** (Highest requirements first)
+     if (studentLevel >= 5 || (studentLevel >= 4 && (bandwidthLevel >= 3 || storageLevel >= 4)) || budgetLevel >= 5 || (bandwidthLevel >= 3 && storageLevel >= 5)) {
+         recommendedType = "Dedicated Hosting";
+         recommendedPlans.push(plans.dedicated.standard);
+         rationale = "Your requirements (high student count, significant bandwidth/storage, or high budget) suggest a dedicated environment offers the best performance, control, and reliability.";
+          if (budgetLevel === 5 && studentLevel >=4) { // If budget allows high availability
+              recommendedPlans.push(plans.dedicated.ha);
+          }
+          if (budgetLevel < 5 && studentLevel >= 5) {
+              rationale += " Consider discussing specific needs with the provider as dedicated costs vary significantly."
+          }
+
+     // **VPS Conditions:** (Moderate to high requirements, excluding dedicated cases)
+     } else if (studentLevel >= 2 || budgetLevel >= 3 || bandwidthLevel >= 2 || storageLevel >= 2) {
+          recommendedType = "VPS Hosting";
+          rationale = "VPS offers a good balance of performance, scalability, and cost for moderate to growing LMS needs, providing more resources than shared hosting.";
+
+          // Suggest specific VPS tiers based on combined factors
+          let vpsScore = studentLevel + budgetLevel + bandwidthLevel + storageLevel;
+          if (vpsScore <= 9) { // Adjusted threshold slightly for broader low VPS coverage
+              recommendedPlans.push(plans.vps.low);
+              if (budgetLevel >= 3 || vpsScore >= 7) recommendedPlans.push(plans.vps.mid); // Suggest mid if budget allows OR needs are borderline mid
+          } else if (vpsScore <= 13) { // Adjusted threshold slightly
+              recommendedPlans.push(plans.vps.mid);
+               if (budgetLevel >= 4 || vpsScore >= 11) recommendedPlans.push(plans.vps.high); // Suggest high if budget allows OR needs are borderline high
+          } else { // Higher end VPS
+              recommendedPlans.push(plans.vps.high);
+              if (budgetLevel < 4) rationale += " Note: High-end VPS might exceed the lower end of your selected budget range."
+          }
+
+          // Also suggest WordPress hosting if budget/needs align (adjusting conditions slightly)
+          if (budgetLevel >= 2 && studentLevel <= 3 && vpsScore <= 11) recommendedPlans.push(plans.wordpress.mid);
+          if (budgetLevel >= 3 && studentLevel >= 2 && vpsScore >= 9) recommendedPlans.push(plans.wordpress.high);
+
+
+     // **Shared Hosting Conditions:** (Lowest requirements)
+     } else {
+         recommendedType = "Shared Hosting";
+         rationale = "Shared hosting is the most economical option, suitable for starting out, smaller student numbers, and lower resource demands.";
+         recommendedPlans.push(plans.shared.low);
+         if (budgetLevel >= 2 || storageLevel >= 2 || bandwidthLevel >=2) { // If slightly higher needs within shared tier
+              recommendedPlans.push(plans.shared.high);
+         }
+         // Suggest WP hosting if budget allows slightly more than basic shared
+         if (budgetLevel >= 1) {
+              recommendedPlans.push(plans.wordpress.low);
+         }
+     }
+
+      // Filter out duplicate plan suggestions (by name)
+      recommendedPlans = recommendedPlans.filter((plan, index, self) =>
+          index === self.findIndex((p) => (
+              p.name === plan.name
+          ))
+      );
+
+    // --- 4. Display Results ---
+    document.getElementById("hostingRecommendation").innerHTML = `<span class='highlight'>${recommendedType}</span>`;
+
+    let planDetailsHTML = `<p>${rationale}</p> <h4>Potential Plan Types:</h4><ul>`;
+    if (recommendedPlans.length > 0) {
+        recommendedPlans.forEach(plan => {
+            // MODIFIED LINE: Removed plan.note, changed link text and style
+            planDetailsHTML += `
+                <li>
+                    <strong>${plan.name}</strong>
+                    <a href="${plan.link}" target="_blank" style="margin-left: 15px; display: inline-block; background-color: #4CAF50; color: white; padding: 5px 12px; border-radius: 4px; text-decoration: none; font-size: 0.9em; vertical-align: middle;">View Plan</a>
+                </li>`;
+        });
     } else {
-      hosting = "Dedicated Hosting";
-      details = "Plan: Classic Series – 150 GB+ SSD, 8-32 GB RAM. Full control. <strong>(Contact for custom configurations)</strong>";
+        planDetailsHTML += "<li>No specific plans matched perfectly, but the general type above is recommended. Please check the provider's site.</li>";
     }
-  } else {
-    hosting = "Dedicated Hosting";
-    details = "Plan: High Availability or Classic Series – Built for 500+ students, high traffic, concurrent users. <strong>Supports 150 GB+ storage</strong>";
-  }
+    planDetailsHTML += "</ul>";
+    planDetailsHTML += `<p><small><em>Note: These are general recommendations. Always verify plan specifics (storage, bandwidth, RAM, CPU limits, allowed concurrent users if specified) directly with the hosting provider to ensure they meet your exact LMS requirements. Prices and plan details can change.</em></small></p>`;
 
-  if (isWordPressLMS && hosting !== "WordPress Hosting") {
-    details += "<br><em>Note: Since you're using a WordPress LMS, also consider a managed WordPress plan for ease of use.</em>";
-  }
 
-  document.getElementById("hostingRecommendation").innerHTML = hosting;
-  document.getElementById("planDetails").innerHTML = details;
-  document.getElementById("results").style.display = "block";
+    document.getElementById("planDetails").innerHTML = planDetailsHTML;
+    document.getElementById("results").style.display = "block"; // Show the results section
+
+    // Scroll smoothly to the results
+    document.getElementById("results").scrollIntoView({ behavior: 'smooth', block: 'start' });
+
 });
 </script>
+
 
 </body>
 </html>
