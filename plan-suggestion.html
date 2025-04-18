@@ -1,143 +1,160 @@
-import React, { useState } from "react";
-import { Card, CardContent } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+<!-- START: LMS Hosting Selector Tool -->
+<style>
+  .lms-tool-container {
+    background: #f9fafb;
+    border: 1px solid #e2e8f0;
+    padding: 24px;
+    border-radius: 12px;
+    max-width: 960px;
+    margin: 0 auto;
+    font-family: Arial, sans-serif;
+  }
 
-const hostingPlans = [
-  {
-    id: "shared",
-    name: "Shared Hosting",
-    url: "https://www.accuwebhosting.com/web-hosting/linux",
-    description: "Ideal for small e-learning platforms and educators on a budget.",
-    match: (answers) => {
-      return (
-        answers.students === "<50" &&
-        answers.ram === "1 GB" &&
-        answers.budget === "<$5/mo"
-      );
-    },
-  },
-  {
-    id: "wordpress",
-    name: "Managed WordPress Hosting",
-    url: "https://www.accuwebhosting.com/web-hosting/wordpress",
-    description: "Perfect for LMS platforms built on WordPress like LearnDash or LifterLMS.",
-    match: (answers) => {
-      return (
-        answers.platform === "WordPress" &&
-        answers.students === "50–200" &&
-        answers.ram === "2–4 GB"
-      );
-    },
-  },
-  {
-    id: "vps",
-    name: "VPS Hosting",
-    url: "https://www.accuwebhosting.com/vps-hosting",
-    description: "Best for growing LMS platforms needing dedicated resources.",
-    match: (answers) => {
-      return (
-        answers.students === "200–500" ||
-        (answers.budget === "$10–$50/mo" && answers.ram === "4–8 GB")
-      );
-    },
-  },
-  {
-    id: "dedicated",
-    name: "Dedicated Server",
-    url: "https://www.accuwebhosting.com/dedicated-servers",
-    description: "Great for enterprise LMS platforms and mission-critical applications.",
-    match: (answers) => {
-      return (
-        answers.students === ">1000" ||
-        answers.ram === ">8 GB"
-      );
-    },
-  },
-];
+  .lms-tool-container h2 {
+    font-size: 1.5rem;
+    margin-bottom: 16px;
+    color: #111827;
+  }
 
-const HostingSelector = () => {
-  const [answers, setAnswers] = useState({});
-  const [suggestion, setSuggestion] = useState(null);
+  .form-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    margin-bottom: 20px;
+  }
 
-  const handleSelect = (key, value) => {
-    const updated = { ...answers, [key]: value };
-    setAnswers(updated);
-    const matchedPlan = hostingPlans.find((plan) => plan.match(updated));
-    setSuggestion(matchedPlan);
-  };
+  .form-group {
+    flex: 1 1 200px;
+    min-width: 220px;
+  }
 
-  return (
-    <Card className="p-4 max-w-3xl mx-auto mt-6">
-      <CardContent>
-        <h2 className="text-xl font-semibold mb-4">🔍 Find the Right LMS Hosting</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div>
-            <Label>How many students do you expect?</Label>
-            <Select onValueChange={(val) => handleSelect("students", val)}>
-              <SelectTrigger><SelectValue placeholder="Select student range" /></SelectTrigger>
-              <SelectContent>
-                <SelectItem value="<50">Less than 50</SelectItem>
-                <SelectItem value="50–200">50–200</SelectItem>
-                <SelectItem value="200–500">200–500</SelectItem>
-                <SelectItem value=">1000">More than 1000</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
+  .form-group label {
+    display: block;
+    margin-bottom: 6px;
+    font-weight: bold;
+    color: #374151;
+  }
 
-          <div>
-            <Label>Preferred platform?</Label>
-            <Select onValueChange={(val) => handleSelect("platform", val)}>
-              <SelectTrigger><SelectValue placeholder="Choose your LMS platform" /></SelectTrigger>
-              <SelectContent>
-                <SelectItem value="Moodle">Moodle</SelectItem>
-                <SelectItem value="Chamilo">Chamilo</SelectItem>
-                <SelectItem value="WordPress">WordPress (LearnDash, LifterLMS)</SelectItem>
-                <SelectItem value="Other">Other</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
+  .form-group select {
+    width: 100%;
+    padding: 8px;
+    border-radius: 8px;
+    border: 1px solid #cbd5e1;
+    font-size: 0.95rem;
+  }
 
-          <div>
-            <Label>Your expected RAM requirement?</Label>
-            <Select onValueChange={(val) => handleSelect("ram", val)}>
-              <SelectTrigger><SelectValue placeholder="Select RAM" /></SelectTrigger>
-              <SelectContent>
-                <SelectItem value="1 GB">1 GB</SelectItem>
-                <SelectItem value="2–4 GB">2–4 GB</SelectItem>
-                <SelectItem value="4–8 GB">4–8 GB</SelectItem>
-                <SelectItem value=">8 GB">More than 8 GB</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
+  #recommendation {
+    background-color: #ffffff;
+    border-left: 4px solid #3b82f6;
+    padding: 16px;
+    margin-top: 20px;
+    border-radius: 6px;
+    color: #1f2937;
+  }
 
-          <div>
-            <Label>What’s your monthly hosting budget?</Label>
-            <Select onValueChange={(val) => handleSelect("budget", val)}>
-              <SelectTrigger><SelectValue placeholder="Select your budget" /></SelectTrigger>
-              <SelectContent>
-                <SelectItem value="<$5/mo">Less than $5/month</SelectItem>
-                <SelectItem value="$5–$10/mo">$5–$10/month</SelectItem>
-                <SelectItem value="$10–$50/mo">$10–$50/month</SelectItem>
-                <SelectItem value=">$50/mo">More than $50/month</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-        </div>
+  .explore-btn {
+    display: inline-block;
+    margin-top: 12px;
+    background-color: #3b82f6;
+    color: #ffffff;
+    padding: 10px 18px;
+    border-radius: 6px;
+    text-decoration: none;
+    font-weight: bold;
+    transition: background-color 0.3s ease;
+  }
 
-        {suggestion && (
-          <div className="mt-6 bg-blue-50 p-4 rounded-xl shadow">
-            <h3 className="text-lg font-semibold">✅ Suggested Hosting: {suggestion.name}</h3>
-            <p className="mt-2 mb-4 text-gray-700">{suggestion.description}</p>
-            <a href={suggestion.url} target="_blank" rel="noopener noreferrer">
-              <Button className="bg-blue-600 text-white hover:bg-blue-700">View Plan</Button>
-            </a>
-          </div>
-        )}
-      </CardContent>
-    </Card>
-  );
-};
+  .explore-btn:hover {
+    background-color: #2563eb;
+  }
 
-export default HostingSelector;
+  @media (max-width: 768px) {
+    .form-row {
+      flex-direction: column;
+    }
+  }
+</style>
+
+<div class="lms-tool-container">
+  <h2>🔍 Find the Best LMS Hosting for Your Needs</h2>
+  <form id="lmsForm" onsubmit="event.preventDefault(); getHostingRecommendation();">
+    <div class="form-row">
+      <div class="form-group">
+        <label for="students">Expected Student Load</label>
+        <select id="students">
+          <option value="">Select...</option>
+          <option value="small">Less than 100</option>
+          <option value="medium">100–1000</option>
+          <option value="large">1000+</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="techComfort">Your Technical Experience</label>
+        <select id="techComfort">
+          <option value="">Select...</option>
+          <option value="beginner">Beginner – I prefer things simple</option>
+          <option value="intermediate">Intermediate – I’m okay managing a few things</option>
+          <option value="advanced">Advanced – I’m comfortable with server tools</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="contentType">Course Type</label>
+        <select id="contentType">
+          <option value="">Select...</option>
+          <option value="basic">Text-based / Quizzes</option>
+          <option value="multimedia">Videos / Presentations</option>
+          <option value="interactive">Live classes / Real-time features</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="location">Where Are Most of Your Students Located?</label>
+        <select id="location">
+          <option value="">Select...</option>
+          <option value="global">Global</option>
+          <option value="usa">USA / North America</option>
+          <option value="india">India / Asia</option>
+          <option value="europe">Europe / UK</option>
+        </select>
+      </div>
+    </div>
+
+    <button type="submit" class="explore-btn">Get Hosting Suggestion</button>
+  </form>
+
+  <div id="recommendation"></div>
+</div>
+
+<script>
+  function getHostingRecommendation() {
+    const students = document.getElementById("students").value;
+    const techComfort = document.getElementById("techComfort").value;
+    const contentType = document.getElementById("contentType").value;
+    const location = document.getElementById("location").value;
+
+    let resultText = "";
+    let link = "#";
+
+    if (students === "small" && techComfort === "beginner") {
+      resultText = "You may benefit from an easy-to-use hosting environment that's budget-friendly and optimized for smaller platforms. Consider shared hosting.";
+      link = "https://www.accuwebhosting.com/web-hosting/linux";
+    } else if (students === "medium" && techComfort !== "advanced" && contentType !== "interactive") {
+      resultText = "A Virtual Private Server (VPS) offers the right balance of control, power, and scalability for a growing e-learning platform.";
+      link = "https://www.accuwebhosting.com/vps-hosting";
+    } else if (techComfort === "advanced" || students === "large" || contentType === "interactive") {
+      resultText = "For large-scale or real-time courses, a dedicated server will give you the performance, security, and flexibility you need.";
+      link = "https://www.accuwebhosting.com/dedicated-servers";
+    } else {
+      resultText = "If you’re running your course through WordPress (using LearnDash or similar), WordPress Hosting will offer the easiest setup.";
+      link = "https://www.accuwebhosting.com/web-hosting/wordpress";
+    }
+
+    document.getElementById("recommendation").innerHTML = `
+      <p>${resultText}</p>
+      <a href="${link}" target="_blank" class="explore-btn">Explore Plans</a>
+    `;
+  }
+</script>
+<!-- END: LMS Hosting Selector Tool -->
