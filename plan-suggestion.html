@@ -1,262 +1,194 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Find the Best LMS Hosting for Your Needs</title>
-  <style>
-    body {
-      font-family: 'Segoe UI', sans-serif;
-      padding: 20px;
-      background: #f9f9f9;
-      color: #333;
-    }
-    .container {
-      max-width: 900px;
-      margin: auto;
-      background: #fff;
-      border-radius: 10px;
-      padding: 30px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.1);
-    }
-    h2 {
-      text-align: center;
-      margin-bottom: 30px;
-    }
-    .form-grid {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 20px;
-    }
-    .form-group {
-      flex: 1 1 calc(50% - 20px);
-    }
-    label {
-      font-weight: 600;
-      display: block;
-      margin-bottom: 8px;
-    }
-    select {
-      width: 100%;
-      padding: 10px;
-      border-radius: 6px;
-      border: 1px solid #ccc;
-    }
-    .btn {
-      display: block;
-      width: 100%;
-      margin-top: 30px;
-      padding: 12px;
-      font-size: 16px;
-      background-color: #007bff;
-      color: white;
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
-    }
-    .result {
-      margin-top: 30px;
-      padding: 20px;
-      border-left: 4px solid #007bff;
-      background: #f1f8ff;
-    }
-    .result a {
-      display: inline-block;
-      margin-top: 15px;
-      background: #007bff;
-      color: #fff;
-      padding: 10px 18px;
-      border-radius: 6px;
-      text-decoration: none;
-    }
-    @media (max-width: 600px) {
-      .form-group {
-        flex: 1 1 100%;
-      }
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LMS Hosting Selector</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            padding: 20px;
+            margin: 0;
+        }
+        .container {
+            max-width: 800px;
+            margin: auto;
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+        }
+        select, input[type="number"] {
+            width: 100%;
+            padding: 10px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        .button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            cursor: pointer;
+            font-size: 16px;
+            border-radius: 4px;
+            width: 100%;
+            margin-top: 10px;
+        }
+        .button:hover {
+            background-color: #45a049;
+        }
+        .results {
+            display: none;
+            margin-top: 20px;
+        }
+        .result-box {
+            background-color: #f1f1f1;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            margin-top: 20px;
+        }
+        .result-box h2 {
+            margin-top: 0;
+            color: #333;
+        }
+        .result-box ul {
+            list-style: none;
+            padding: 0;
+        }
+        .result-box ul li {
+            margin: 8px 0;
+            color: #555;
+        }
+        .highlight {
+            font-weight: bold;
+            color: #1E90FF;
+        }
+    </style>
 </head>
 <body>
 
 <div class="container">
-  <h2>Find the Right LMS Hosting</h2>
-  <div class="form-grid">
-    <div class="form-group">
-      <label for="platform">Which LMS are you using?</label>
-      <select id="platform">
-        <option value="">Select LMS</option>
-        <option value="moodle">Moodle</option>
-        <option value="chamilo">Chamilo</option>
-        <option value="learndash">LearnDash (WordPress)</option>
-        <option value="rosariosis">RosarioSIS</option>
-        <option value="tcexam">TCExam</option>
-        <option value="none">Not decided</option>
-      </select>
-    </div>
-    <div class="form-group">
-      <label for="students">Estimated number of students?</label>
-      <select id="students">
-        <option value="">Select</option>
-        <option value="less50">Less than 50</option>
-        <option value="50-200">50 – 200</option>
-        <option value="200-500">200 – 500</option>
-        <option value="500plus">500+</option>
-      </select>
-    </div>
-    <div class="form-group">
-      <label for="budget">Monthly hosting budget?</label>
-      <select id="budget">
-        <option value="">Select</option>
-        <option value="low">$1–$5</option>
-        <option value="medium">$6–$20</option>
-        <option value="high">$20+</option>
-      </select>
-    </div>
-    <div class="form-group">
-      <label for="technical">Your tech comfort level?</label>
-      <select id="technical">
-        <option value="">Select</option>
-        <option value="basic">Beginner – Prefer Managed Setup</option>
-        <option value="intermediate">Intermediate – Can handle some setup</option>
-        <option value="advanced">Advanced – Full control preferred</option>
-      </select>
-    </div>
-  </div>
-  <button class="btn" onclick="recommend()">Suggest My Hosting Plan</button>
+    <h1>LMS Hosting Selector</h1>
+    <form id="lmsForm">
+        <div class="form-group">
+            <label for="students">Number of Students:</label>
+            <select id="students" required>
+                <option value="">Select...</option>
+                <option value="1-25">1-25</option>
+                <option value="26-50">26-50</option>
+                <option value="51-200">51-200</option>
+                <option value="201-500">201-500</option>
+                <option value="501-1000">501-1000</option>
+                <option value="1000+">1000+</option>
+            </select>
+        </div>
+        
+        <div class="form-group">
+            <label for="budget">Budget (per month in $):</label>
+            <select id="budget" required>
+                <option value="">Select...</option>
+                <option value="0-25">$0 - $25</option>
+                <option value="26-50">$26 - $50</option>
+                <option value="51-100">$51 - $100</option>
+                <option value="101-200">$101 - $200</option>
+                <option value="201+">$201+</option>
+            </select>
+        </div>
 
-  <div class="result" id="resultBox" style="display:none;"></div>
+        <div class="form-group">
+            <label for="bandwidth">Bandwidth Usage:</label>
+            <select id="bandwidth" required>
+                <option value="">Select...</option>
+                <option value="low">Low</option>
+                <option value="medium">Medium</option>
+                <option value="high">High</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="storage">Storage Requirement (in GB):</label>
+            <select id="storage" required>
+                <option value="">Select...</option>
+                <option value="10">10 GB</option>
+                <option value="25">25 GB</option>
+                <option value="50">50 GB</option>
+                <option value="75">75 GB</option>
+                <option value="100">100 GB</option>
+                <option value="150+">150 GB+</option>
+            </select>
+        </div>
+
+        <button type="submit" class="button">Get Hosting Solution</button>
+    </form>
+
+    <div class="results" id="results">
+        <div class="result-box">
+            <h2>Recommended Hosting Solution:</h2>
+            <div id="hostingRecommendation"></div>
+            <div id="planDetails"></div>
+        </div>
+    </div>
 </div>
 
 <script>
-  function recommend() {
-    const platform = document.getElementById("platform").value;
-    const students = document.getElementById("students").value;
-    const budget = document.getElementById("budget").value;
-    const tech = document.getElementById("technical").value;
+    document.getElementById("lmsForm").addEventListener("submit", function(event) {
+        event.preventDefault();
 
-    // Validation
-    if (!platform || !students || !budget || !tech) {
-      alert("Please select all options before getting your recommendation.");
-      return;
-    }
+        // Validate that all fields are selected
+        const students = document.getElementById("students").value;
+        const budget = document.getElementById("budget").value;
+        const bandwidth = document.getElementById("bandwidth").value;
+        const storage = document.getElementById("storage").value;
 
-    let suggestions = [];
-    let resultHTML = "";
+        if (!students || !budget || !bandwidth || !storage) {
+            alert("Please fill out all fields.");
+            return;
+        }
 
-    // Priority: Audience > Platform > Budget > Technical Knowledge
+        // Parse inputs
+        const numStudents = parseInt(students.split('-')[0]);
+        const maxBudget = parseInt(budget.split('-')[1] || budget.split('+')[0]);
 
-    // Shared Hosting (less than 50 students)
-    if (students === "less50") {
-      suggestions.push({
-        title: "Shared Hosting – GoSolo ++",
-        desc: "Ideal for small platforms and low traffic. Budget-friendly and easy to manage.",
-        link: "https://www.accuwebhosting.com/web-hosting/linux"
-      });
-      suggestions.push({
-        title: "Shared Hosting – Premium ++",
-        desc: "A bit more storage and RAM for growing needs while still affordable.",
-        link: "https://www.accuwebhosting.com/web-hosting/linux"
-      });
+        let hostingSolution = "";
+        let planDetails = "";
 
-      // Suggest WordPress only if relevant
-      if (platform === "learndash" || platform === "lifterlms") {
-        suggestions.push({
-          title: "WordPress Hosting – WordPress Startup ++",
-          desc: "Optimized for LearnDash/LifterLMS. Great for WordPress LMS sites.",
-          link: "https://www.accuwebhosting.com/web-hosting/wordpress"
-        });
-      }
-    }
+        // Determine Hosting Solution
+        if (numStudents <= 50 && maxBudget <= 50) {
+            hostingSolution = "Shared Hosting";
+            planDetails = "Recommended Plan: GoSolo ++, with 50 GB storage, 750 GB bandwidth, and 1 GB RAM. (30-day money-back guarantee)";
+        } else if (numStudents <= 200 && maxBudget <= 100) {
+            hostingSolution = "VPS Hosting";
+            planDetails = "Recommended Plan: VPS Lite ++, with 40 GB storage, 500 GB bandwidth, and 2 GB RAM. (7-day money-back guarantee)";
+        } else if (numStudents > 200 && maxBudget <= 200) {
+            hostingSolution = "VPS Hosting";
+            planDetails = "Recommended Plan: VPS Premium ++, with 70 GB storage, 1 TB bandwidth, and 4 GB RAM. (7-day money-back guarantee)";
+        } else {
+            hostingSolution = "Dedicated Hosting";
+            planDetails = "Recommended Plan: Classic Series, with up to 128 GB RAM and 1 TB+ storage.";
+        }
 
-    // Medium audience (50-500 students)
-    else if (students === "50-200" || students === "200-500") {
-      // VPS is ideal here
-      suggestions.push({
-        title: "VPS Hosting – VPS Premium ++",
-        desc: "Good balance of cost and power for medium-scale LMS.",
-        link: "https://www.accuwebhosting.com/vps-hosting/linux"
-      });
-      suggestions.push({
-        title: "VPS Hosting – VPS Elite ++",
-        desc: "More storage and CPU for performance-focused educators.",
-        link: "https://www.accuwebhosting.com/vps-hosting/linux"
-      });
+        // Display results
+        document.getElementById("hostingRecommendation").innerHTML = "<span class='highlight'>" + hostingSolution + "</span>";
+        document.getElementById("planDetails").innerHTML = planDetails;
 
-      // Add shared if budget is very low
-      if (budget === "low") {
-        suggestions.push({
-          title: "Shared Hosting – Enterprise Pro ++",
-          desc: "An affordable fallback if VPS is out of budget.",
-          link: "https://www.accuwebhosting.com/web-hosting/linux"
-        });
-      }
-
-      // WordPress, only if LearnDash/LifterLMS
-      if (platform === "learndash" || platform === "lifterlms") {
-        suggestions.push({
-          title: "WordPress Hosting – WordPress Professional ++",
-          desc: "Designed specifically for WordPress LMS with more traffic.",
-          link: "https://www.accuwebhosting.com/web-hosting/wordpress"
-        });
-      }
-    }
-
-    // Large audience (500+)
-    else if (students === "500plus") {
-      suggestions.push({
-        title: "Dedicated Hosting – Classic Series",
-        desc: "Perfect for enterprise-level LMS and institutions.",
-        link: "https://www.accuwebhosting.com/dedicated-servers"
-      });
-      suggestions.push({
-        title: "High Availability Servers",
-        desc: "Great for mission-critical operations and large-scale learning environments.",
-        link: "https://www.accuwebhosting.com/dedicated-servers"
-      });
-
-      // Include VPS Elite if budget is medium
-      if (budget === "medium") {
-        suggestions.push({
-          title: "VPS Hosting – VPS Exclusive ++",
-          desc: "High-tier VPS with 8 GB RAM and strong performance.",
-          link: "https://www.accuwebhosting.com/vps-hosting/linux"
-        });
-      }
-
-      // Include WordPress Advanced ONLY IF LearnDash/LifterLMS
-      if ((platform === "learndash" || platform === "lifterlms") && budget !== "low") {
-        suggestions.push({
-          title: "WordPress Hosting – WordPress Advanced ++",
-          desc: "Works well for high-traffic WordPress LMS if managed properly.",
-          link: "https://www.accuwebhosting.com/web-hosting/wordpress"
-        });
-      }
-    }
-
-    // Fallback for rare combinations
-    if (suggestions.length === 0) {
-      suggestions.push({
-        title: "VPS Hosting – VPS Lite ++",
-        desc: "A flexible middle-ground option for evolving LMS needs.",
-        link: "https://www.accuwebhosting.com/vps-hosting/linux"
-      });
-    }
-
-    // Build HTML
-    resultHTML += "<h3 style='margin-bottom: 10px;'>Recommended Hosting Plans:</h3>";
-    suggestions.forEach(s => {
-      resultHTML += `
-        <div style="margin-bottom: 20px; border-left: 3px solid #3b82f6; padding-left: 12px;">
-          <p style="margin: 0;"><strong>${s.title}</strong></p>
-          <p style="margin: 4px 0;">${s.desc}</p>
-          <a href="${s.link}" target="_blank" style="color: #fff; background-color: #3b82f6; padding: 6px 12px; border-radius: 6px; text-decoration: none; display: inline-block;">Explore Plan</a>
-        </div>
-      `;
+        document.getElementById("results").style.display = "block";
     });
-
-    document.getElementById("resultBox").innerHTML = resultHTML;
-    document.getElementById("resultBox").style.display = "block";
-  }
 </script>
 
 </body>
