@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>LMS Hosting Selector Tool</title>
+  <title>Find the Best LMS Hosting for Your Needs</title>
   <style>
     body {
       font-family: 'Segoe UI', sans-serif;
@@ -134,31 +134,127 @@
     const budget = document.getElementById("budget").value;
     const tech = document.getElementById("technical").value;
 
-    let suggestion = "";
-    let link = "";
-
-    // Logic starts
-    if (platform === "learndash") {
-      suggestion = "<strong>WordPress Hosting – WordPress Professional ++</strong><br>Optimized for LearnDash and WordPress LMS plugins.";
-      link = "https://www.accuwebhosting.com/web-hosting/wordpress";
-    } else if (budget === "low" && students === "less50") {
-      suggestion = "<strong>Shared Hosting – GoSolo ++</strong><br>Best for small platforms with low traffic.";
-      link = "https://www.accuwebhosting.com/web-hosting/linux";
-    } else if (budget === "medium" && (students === "50-200" || students === "200-500")) {
-      suggestion = "<strong>VPS Hosting – VPS Premium ++</strong><br>Balanced performance and scalability.";
-      link = "https://www.accuwebhosting.com/vps-hosting/linux";
-    } else if (budget === "high" || students === "500plus") {
-      suggestion = "<strong>Dedicated Hosting – Classic Series</strong><br>Great for large-scale LMS platforms or institutions.";
-      link = "https://www.accuwebhosting.com/dedicated-servers";
-    } else {
-      suggestion = "<strong>VPS Hosting – VPS Lite ++</strong><br>Good starting point for growing LMS platforms.";
-      link = "https://www.accuwebhosting.com/vps-hosting/linux";
+    // Validation
+    if (!platform || !students || !budget || !tech) {
+      alert("Please select all options before getting your recommendation.");
+      return;
     }
 
-    document.getElementById("resultBox").innerHTML = `
-      <p>${suggestion}</p>
-      <a href="${link}" target="_blank">Explore Plan</a>
-    `;
+    let suggestions = [];
+    let resultHTML = "";
+
+    // Priority: Audience > Platform > Budget > Technical Knowledge
+
+    // Shared Hosting (less than 50 students)
+    if (students === "less50") {
+      suggestions.push({
+        title: "Shared Hosting – GoSolo ++",
+        desc: "Ideal for small platforms and low traffic. Budget-friendly and easy to manage.",
+        link: "https://www.accuwebhosting.com/web-hosting/linux"
+      });
+      suggestions.push({
+        title: "Shared Hosting – Premium ++",
+        desc: "A bit more storage and RAM for growing needs while still affordable.",
+        link: "https://www.accuwebhosting.com/web-hosting/linux"
+      });
+
+      // Suggest WordPress only if relevant
+      if (platform === "learndash" || platform === "lifterlms") {
+        suggestions.push({
+          title: "WordPress Hosting – WordPress Startup ++",
+          desc: "Optimized for LearnDash/LifterLMS. Great for WordPress LMS sites.",
+          link: "https://www.accuwebhosting.com/web-hosting/wordpress"
+        });
+      }
+    }
+
+    // Medium audience (50-500 students)
+    else if (students === "50-200" || students === "200-500") {
+      // VPS is ideal here
+      suggestions.push({
+        title: "VPS Hosting – VPS Premium ++",
+        desc: "Good balance of cost and power for medium-scale LMS.",
+        link: "https://www.accuwebhosting.com/vps-hosting/linux"
+      });
+      suggestions.push({
+        title: "VPS Hosting – VPS Elite ++",
+        desc: "More storage and CPU for performance-focused educators.",
+        link: "https://www.accuwebhosting.com/vps-hosting/linux"
+      });
+
+      // Add shared if budget is very low
+      if (budget === "low") {
+        suggestions.push({
+          title: "Shared Hosting – Enterprise Pro ++",
+          desc: "An affordable fallback if VPS is out of budget.",
+          link: "https://www.accuwebhosting.com/web-hosting/linux"
+        });
+      }
+
+      // WordPress, only if LearnDash/LifterLMS
+      if (platform === "learndash" || platform === "lifterlms") {
+        suggestions.push({
+          title: "WordPress Hosting – WordPress Professional ++",
+          desc: "Designed specifically for WordPress LMS with more traffic.",
+          link: "https://www.accuwebhosting.com/web-hosting/wordpress"
+        });
+      }
+    }
+
+    // Large audience (500+)
+    else if (students === "500plus") {
+      suggestions.push({
+        title: "Dedicated Hosting – Classic Series",
+        desc: "Perfect for enterprise-level LMS and institutions.",
+        link: "https://www.accuwebhosting.com/dedicated-servers"
+      });
+      suggestions.push({
+        title: "High Availability Servers",
+        desc: "Great for mission-critical operations and large-scale learning environments.",
+        link: "https://www.accuwebhosting.com/dedicated-servers"
+      });
+
+      // Include VPS Elite if budget is medium
+      if (budget === "medium") {
+        suggestions.push({
+          title: "VPS Hosting – VPS Exclusive ++",
+          desc: "High-tier VPS with 8 GB RAM and strong performance.",
+          link: "https://www.accuwebhosting.com/vps-hosting/linux"
+        });
+      }
+
+      // Include WordPress Advanced ONLY IF LearnDash/LifterLMS
+      if ((platform === "learndash" || platform === "lifterlms") && budget !== "low") {
+        suggestions.push({
+          title: "WordPress Hosting – WordPress Advanced ++",
+          desc: "Works well for high-traffic WordPress LMS if managed properly.",
+          link: "https://www.accuwebhosting.com/web-hosting/wordpress"
+        });
+      }
+    }
+
+    // Fallback for rare combinations
+    if (suggestions.length === 0) {
+      suggestions.push({
+        title: "VPS Hosting – VPS Lite ++",
+        desc: "A flexible middle-ground option for evolving LMS needs.",
+        link: "https://www.accuwebhosting.com/vps-hosting/linux"
+      });
+    }
+
+    // Build HTML
+    resultHTML += "<h3 style='margin-bottom: 10px;'>Recommended Hosting Plans:</h3>";
+    suggestions.forEach(s => {
+      resultHTML += `
+        <div style="margin-bottom: 20px; border-left: 3px solid #3b82f6; padding-left: 12px;">
+          <p style="margin: 0;"><strong>${s.title}</strong></p>
+          <p style="margin: 4px 0;">${s.desc}</p>
+          <a href="${s.link}" target="_blank" style="color: #fff; background-color: #3b82f6; padding: 6px 12px; border-radius: 6px; text-decoration: none; display: inline-block;">Explore Plan</a>
+        </div>
+      `;
+    });
+
+    document.getElementById("resultBox").innerHTML = resultHTML;
     document.getElementById("resultBox").style.display = "block";
   }
 </script>
